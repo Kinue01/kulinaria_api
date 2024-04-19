@@ -5,10 +5,11 @@ mod errors;
 use std::time::Duration;
 
 use axum::{http::Method, routing::{delete, get, post, put}, Router};
-use crate::handlers::{ get_users, get_dishes, get_types, get_bases, get_prods, get_struct_by_dish_id, add_dish, update_dish, delete_dish };
+use crate::handlers::{ get_users, get_dishes, get_types, get_bases, get_prods, get_struct_by_dish_id, add_dish, update_dish, delete_dish, get_cart_by_order_id, get_paytypes, add_order, get_orders_by_user_id };
 use sqlx::postgres::PgPoolOptions;
 use dotenvy::dotenv;
 use tower_http::{ trace::{ self, TraceLayer }, cors::{ CorsLayer, Any } };
+
 
 #[tokio::main]
 async fn main() {
@@ -40,10 +41,14 @@ async fn main() {
     .route("/api/types", get(get_types))
     .route("/api/bases", get(get_bases))
     .route("/api/prods", get(get_prods))
-    .route("/api/structbyid", post(get_struct_by_dish_id))
+    .route("/api/struct_by_dish", post(get_struct_by_dish_id))
     .route("/api/adddish", post(add_dish))
     .route("/api/updatedish", put(update_dish))
+    .route("/api/cart_by_order", post(get_cart_by_order_id))
     .route("/api/deletedish", delete(delete_dish))
+    .route("/api/order_by_user", post(get_orders_by_user_id))
+    .route("/api/addorder", post(add_order))
+    .route("/api/paytypes", get(get_paytypes))
     .with_state(pool)
     .layer(
         TraceLayer::new_for_http()

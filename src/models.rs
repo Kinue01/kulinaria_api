@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::prelude::*;
 
 #[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
-pub struct DishFormDb {
+pub struct Dish {
     pub dish_id: i32,
     pub dish_name: String,
     pub dish_type_id: i32,
@@ -11,34 +11,50 @@ pub struct DishFormDb {
 }
 
 #[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
-pub struct UserFromDb{
+pub struct User {
     pub user_id: i32,
-    pub first_name: String,
-    pub last_name: String,
-    pub patronymic: String,
-    pub date_of_birthday: chrono::NaiveDate,
-    pub login: String,
+    pub user_firstname: String,
+    pub user_lastname: String,
+    pub user_patronymic: String,
+    pub user_birthday: chrono::NaiveDate,
+    pub user_login: String,
     pub user_password: String,
-    pub phone: String,
-    pub adress: String,
+    pub user_phone: String,
+    pub user_address: String,
     pub user_role_id: i32
 }
 
 #[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
-pub struct TypeFromDb{
+pub struct Role {
+    pub role_id: i32,
+    pub role_name: String
+}
+
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+pub struct UserData {
+    pub user_id: i32,
+    pub user_passport_ser: i32,
+    pub user_passport_num: i32,
+    pub user_who_issued: String,
+    pub user_issue_date: chrono::NaiveDate,
+    pub user_email: String
+}
+
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+pub struct Type {
     pub type_id: i32,
     pub type_name: String
 }
 
 #[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
-pub struct BaseFromDb{
+pub struct Base {
     pub base_id: i32,
     pub base_name: String,
     pub base_exit: i32
 }
 
 #[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
-pub struct ProdFromDb{
+pub struct Product {
     pub prod_id: i32,
     pub prod_name: String,
     pub prod_protein: i32,
@@ -47,8 +63,30 @@ pub struct ProdFromDb{
 }
 
 #[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
-pub struct StructFromDb{
-    pub dishes_id: i32,
-    pub products_id: String,
-    pub weight: i32
+pub struct Structure {
+    pub struct_dish_id: i32,
+    pub struct_product_id: String,
+    pub struct_weight: i32
+}
+
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+pub struct Paytype {
+    pub type_id: i32,
+    pub type_name: String
+}
+
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+pub struct Order {
+    pub order_id: i32,
+    pub order_user_id: i32,
+    pub order_address: String,
+    pub order_date: chrono::NaiveDate,
+    pub order_paytype_id: i32
+}
+
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+pub struct OrderCart {
+    pub cart_order_id: i32,
+    pub cart_prod_id: i32,
+    pub cart_prod_count: i32
 }
