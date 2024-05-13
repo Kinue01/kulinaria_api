@@ -47,7 +47,7 @@ async fn main() {
     .route("/api/cart_by_order", post(get_cart_by_order_id))
     .route("/api/deletedish", delete(delete_dish))
     .route("/api/order_by_user", post(get_orders_by_user_id))
-    .route("/api/addorder", post(add_order))
+    //.route("/api/addorder", post(add_order))
     .route("/api/paytypes", get(get_paytypes))
     .with_state(pool)
     .layer(
