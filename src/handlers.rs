@@ -1,5 +1,7 @@
-use axum::{ extract::{ State, Json }, http::StatusCode };
-use sqlx::{Acquire, PgPool, Pool };
+use std::collections::HashMap;
+
+use axum::{ debug_handler, extract::{ Json, State }, http::StatusCode };
+use sqlx::{ Acquire, PgPool };
 
 use crate::{ 
     errors::MyError, models::{ Base, Dish, Order, OrderCart, Paytype, Product, Structure, Type, User }
@@ -143,16 +145,19 @@ pub async fn get_paytypes(State(pool): State<PgPool>) -> Result<Json<Vec<Paytype
     
 }
 
-pub async fn add_order(State(pool): State<PgPool>, Json(order): Json<Order>, Json(cart): Json<Vec<OrderCart>>) -> Result<StatusCode, MyError> {
+pub async fn add_order(State(pool): State<PgPool>, Json(order): Json<HashMap<Order, Vec<OrderCart>>>) -> Result<StatusCode, MyError> {
 
-    let mut trans = Pool::begin(&pool).await.unwrap();
+    let mut trans = PgPool::begin(&pool).await.unwrap();
 
     let mut i = 1;
+
+    let ord = order.keys().next().unwrap();
+    let cart = order.values().next().unwrap();
 
     trans.begin().await.unwrap();
 
     let _ = sqlx::query("insert into tb_order (order_address, order_user_id, order_date, order_paytype_id) values ($1, $2, $3, $4)")
-    .bind(&order.order_address).bind(&order.order_user_id).bind(&order.order_date).bind(&order.order_paytype_id)
+    .bind(&ord.order_address).bind(&ord.order_user_id).bind(&ord.order_date).bind(&ord.order_paytype_id)
     .execute(&pool)
     .await
     .map_err(MyError::DBError);

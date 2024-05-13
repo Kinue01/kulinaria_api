@@ -75,7 +75,7 @@ pub struct Paytype {
     pub type_name: String
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct Order {
     pub order_id: i32,
     pub order_user_id: i32,
