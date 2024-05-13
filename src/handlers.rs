@@ -7,7 +7,7 @@ use crate::{
 
 pub async fn get_dishes(State(pool): State<PgPool>) -> Result<Json<Vec<Dish>>, MyError> {
     
-    let dishes: Vec<Dish> = sqlx::query_as("select * from dishes order by dish_id")
+    let dishes: Vec<Dish> = sqlx::query_as("select * from tb_dish order by dish_id")
     .fetch_all(&pool)
     .await
     .map_err(MyError::DBError)?;
@@ -29,7 +29,7 @@ pub async fn get_users(State(pool): State<PgPool>) -> Result<Json<Vec<User>>, My
 
 pub async fn get_types(State(pool): State<PgPool>) -> Result<Json<Vec<Type>>, MyError> {
     
-    let types: Vec<Type> = sqlx::query_as("select * from dish_types order by type_id")
+    let types: Vec<Type> = sqlx::query_as("select * from tb_dish_type order by type_id")
     .fetch_all(&pool)
     .await
     .map_err(MyError::DBError)?;
@@ -40,7 +40,7 @@ pub async fn get_types(State(pool): State<PgPool>) -> Result<Json<Vec<Type>>, My
 
 pub async fn get_bases(State(pool): State<PgPool>) -> Result<Json<Vec<Base>>, MyError> {
     
-    let types: Vec<Base> = sqlx::query_as("select * from dish_base order by base_id")
+    let types: Vec<Base> = sqlx::query_as("select * from tb_dish_base order by base_id")
     .fetch_all(&pool)
     .await
     .map_err(MyError::DBError)?;
@@ -51,7 +51,7 @@ pub async fn get_bases(State(pool): State<PgPool>) -> Result<Json<Vec<Base>>, My
 
 pub async fn get_prods(State(pool): State<PgPool>) -> Result<Json<Vec<Product>>, MyError> {
     
-    let prods: Vec<Product> = sqlx::query_as("select * from products order by prod_id")
+    let prods: Vec<Product> = sqlx::query_as("select * from tb_product order by prod_id")
     .fetch_all(&pool)
     .await
     .map_err(MyError::DBError)?;
@@ -62,7 +62,7 @@ pub async fn get_prods(State(pool): State<PgPool>) -> Result<Json<Vec<Product>>,
 
 pub async fn get_struct_by_dish_id(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Result<Json<Vec<Structure>>, MyError> {
     
-    let struc: Vec<Structure> = sqlx::query_as("select * from scructure where dishes_id = $1")
+    let struc: Vec<Structure> = sqlx::query_as("select * from tb_scructure where dishes_id = $1")
     .bind(&dish.dish_id)
     .fetch_all(&pool)
     .await
@@ -74,7 +74,7 @@ pub async fn get_struct_by_dish_id(State(pool): State<PgPool>, Json(dish): Json<
 
 pub async fn add_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Result<StatusCode, MyError> {
 
-    let _ = sqlx::query("insert into dishes (dish_name, dish_type_id, dish_base_id, dish_image) values ($1, $2, $3, $4)")
+    let _ = sqlx::query("insert into tb_dish (dish_name, dish_type_id, dish_base_id, dish_image) values ($1, $2, $3, $4)")
     .bind(&dish.dish_name).bind(&dish.dish_type_id).bind(&dish.dish_base_id).bind(&dish.dish_image)
     .execute(&pool)
     .await
@@ -86,7 +86,7 @@ pub async fn add_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Res
 
 pub async fn update_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Result<StatusCode, MyError> {
 
-    let _ = sqlx::query("update dishes set dish_name = $1, dish_type_id = $2, dish_base_id = $3, dish_image = $4 where dish_id = $5")
+    let _ = sqlx::query("update tb_dish set dish_name = $1, dish_type_id = $2, dish_base_id = $3, dish_image = $4 where dish_id = $5")
     .bind(&dish.dish_name).bind(&dish.dish_type_id).bind(&dish.dish_base_id).bind(&dish.dish_image).bind(&dish.dish_id)
     .execute(&pool)
     .await
@@ -98,7 +98,7 @@ pub async fn update_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> 
 
 pub async fn delete_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Result<StatusCode, MyError> {
 
-    let _ = sqlx::query("delete from dishes where dish_id = $1")
+    let _ = sqlx::query("delete from tb_dish where dish_id = $1")
     .bind(&dish.dish_id)
     .execute(&pool)
     .await
