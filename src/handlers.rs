@@ -9,12 +9,14 @@ use crate::{
 
 pub async fn get_dishes(State(pool): State<PgPool>) -> Result<Json<Vec<Dish>>, MyError> {
     
-    let dishes: Vec<Dish> = sqlx::query_as("select * from tb_dish order by dish_id")
+    let mut dishes: Vec<Dish> = sqlx::query_as("select * from tb_dish order by dish_id")
     .fetch_all(&pool)
     .await
     .map_err(MyError::DBError)?;
 
-    Ok(Json(dishes))
+    let res: Vec<Dish> = dishes.iter_mut().map(|dish| if dish.dish_image.is_empty() { dish.dish_image = String::from("default.png"); return dish.clone(); } else { return dish.clone(); }).collect();
+
+    Ok(Json(res))
     
 }
 
@@ -64,7 +66,7 @@ pub async fn get_prods(State(pool): State<PgPool>) -> Result<Json<Vec<Product>>,
 
 pub async fn get_struct_by_dish_id(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Result<Json<Vec<Structure>>, MyError> {
     
-    let struc: Vec<Structure> = sqlx::query_as("select * from tb_scructure where dishes_id = $1")
+    let struc: Vec<Structure> = sqlx::query_as("select * from tb_structure where dishes_id = $1")
     .bind(&dish.dish_id)
     .fetch_all(&pool)
     .await

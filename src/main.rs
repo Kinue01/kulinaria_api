@@ -58,7 +58,7 @@ async fn main() {
             .level(tracing::Level::INFO)),
     ).layer(cors);
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:8000").await.unwrap();
+    let listener = tokio::net::TcpListener::bind("172.20.105.123:8000").await.unwrap();
     tracing::info!("listening on {}", listener.local_addr().unwrap());
 
     axum::serve(listener, app).await.unwrap();
