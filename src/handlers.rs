@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use axum::{ debug_handler, extract::{ Json, State }, http::StatusCode };
+use axum::{ debug_handler, extract::{ Json, State, Path }, http::StatusCode };
 use sqlx::{ Acquire, PgPool };
 
 use crate::{ 
@@ -64,10 +64,10 @@ pub async fn get_prods(State(pool): State<PgPool>) -> Result<Json<Vec<Product>>,
     
 }
 
-pub async fn get_struct_by_dish_id(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Result<Json<Vec<Structure>>, MyError> {
+pub async fn get_struct_by_dish_id(State(pool): State<PgPool>, Path(id): Path<i32>) -> Result<Json<Vec<Structure>>, MyError> {
     
     let struc: Vec<Structure> = sqlx::query_as("select * from tb_structure where dishes_id = $1")
-    .bind(&dish.dish_id)
+    .bind(&id)
     .fetch_all(&pool)
     .await
     .map_err(MyError::DBError)?;
@@ -108,14 +108,14 @@ pub async fn delete_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> 
     .await
     .map_err(MyError::DBError);
 
-    Ok(StatusCode::CREATED)
+    Ok(StatusCode::OK)
 
 }
 
-pub async fn get_orders_by_user_id(State(pool): State<PgPool>, Json(user): Json<User>) -> Result<Json<Vec<Order>>, MyError> {
+pub async fn get_orders_by_user_id(State(pool): State<PgPool>, Path(id): Path<i32>) -> Result<Json<Vec<Order>>, MyError> {
     
     let order: Vec<Order> = sqlx::query_as("select * from tb_order where user_id = $1")
-    .bind(&user.user_id)
+    .bind(&id)
     .fetch_all(&pool)
     .await
     .map_err(MyError::DBError)?;
@@ -124,10 +124,10 @@ pub async fn get_orders_by_user_id(State(pool): State<PgPool>, Json(user): Json<
     
 }
 
-pub async fn get_cart_by_order_id(State(pool): State<PgPool>, Json(order): Json<Order>) -> Result<Json<Vec<OrderCart>>, MyError> {
+pub async fn get_cart_by_order_id(State(pool): State<PgPool>, Path(id): Path<i32>) -> Result<Json<Vec<OrderCart>>, MyError> {
     
     let cart: Vec<OrderCart> = sqlx::query_as("select * from tb_order_cart where cart_order_id = $1")
-    .bind(&order.order_id)
+    .bind(&id)
     .fetch_all(&pool)
     .await
     .map_err(MyError::DBError)?;
@@ -176,5 +176,4 @@ pub async fn add_order(State(pool): State<PgPool>, Json(order): Json<HashMap<Ord
     trans.commit().await.unwrap();
 
     Ok(StatusCode::CREATED)
-
 }
