@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::*;
+use utoipa::ToSchema;
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
 pub struct Dish {
     pub dish_id: i32,
     pub dish_name: String,
@@ -10,7 +11,7 @@ pub struct Dish {
     pub dish_image: String
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
 pub struct User {
     pub user_id: i32,
     pub user_firstname: String,
@@ -24,13 +25,13 @@ pub struct User {
     pub user_role_id: i32
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
 pub struct Role {
     pub role_id: i32,
     pub role_name: String
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
 pub struct UserData {
     pub user_id: i32,
     pub user_passport_ser: i32,
@@ -40,20 +41,20 @@ pub struct UserData {
     pub user_email: String
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
 pub struct Type {
     pub type_id: i32,
     pub type_name: String
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
 pub struct Base {
     pub base_id: i32,
     pub base_name: String,
     pub base_exit: i32
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
 pub struct Product {
     pub prod_id: i32,
     pub prod_name: String,
@@ -62,20 +63,20 @@ pub struct Product {
     pub prod_carboh: i32
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
 pub struct Structure {
     pub struct_dish_id: i32,
     pub struct_product_id: String,
     pub struct_weight: i32
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
 pub struct Paytype {
     pub type_id: i32,
     pub type_name: String
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, PartialEq, Eq, Hash, ToSchema)]
 pub struct Order {
     pub order_id: i32,
     pub order_user_id: i32,
@@ -84,7 +85,7 @@ pub struct Order {
     pub order_paytype_id: i32
 }
 
-#[derive(Clone, Debug, FromRow, Deserialize, Serialize)]
+#[derive(Clone, Debug, FromRow, Deserialize, Serialize, ToSchema)]
 pub struct OrderCart {
     pub cart_order_id: i32,
     pub cart_prod_id: i32,

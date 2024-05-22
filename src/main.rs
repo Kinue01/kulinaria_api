@@ -9,7 +9,32 @@ use crate::handlers::{ get_users, get_dishes, get_types, get_bases, get_prods, g
 use sqlx::postgres::PgPoolOptions;
 use dotenvy::dotenv;
 use tower_http::{ trace::{ self, TraceLayer }, cors::{ CorsLayer, Any } };
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
+use models::{ Dish, User, Role, UserData, Type, Base, Product, Structure, Paytype, Order, OrderCart };
 
+#[derive(OpenApi)]
+#[openapi(
+    paths(
+        handlers::get_users,
+        handlers::get_dishes, 
+        handlers::get_types, 
+        handlers::get_bases, 
+        handlers::get_prods, 
+        handlers::get_struct_by_dish_id, 
+        handlers::add_dish, 
+        handlers::update_dish, 
+        handlers::delete_dish, 
+        handlers::get_cart_by_order_id, 
+        handlers::get_paytypes, 
+        handlers::add_order, 
+        handlers::get_orders_by_user_id
+    ),
+    components(
+        schemas(Dish, User, Role, UserData, Type, Base, Product, Structure, Paytype, Order, OrderCart)
+    )
+)]
+struct ApiDoc;
 
 #[tokio::main]
 async fn main() {
@@ -36,7 +61,6 @@ async fn main() {
     .unwrap();
     
     let app = Router::new()
-    .route("/swagger", get(|| async { swagger_ui("") }))
     .route("/api/users", get(get_users))
     .route("/api/dishes", get(get_dishes))
     .route("/api/types", get(get_types))
@@ -50,6 +74,7 @@ async fn main() {
     .route("/api/order_by_user", get(get_orders_by_user_id))
     .route("/api/add_order", post(add_order))
     .route("/api/paytypes", get(get_paytypes))
+    .merge(SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi()))
     .with_state(pool)
     .layer(
         TraceLayer::new_for_http()

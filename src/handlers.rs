@@ -7,6 +7,14 @@ use crate::{
     errors::MyError, models::{ Base, Dish, Order, OrderCart, Paytype, Product, Structure, Type, User }
 };
 
+#[utoipa::path(
+    get,
+    path = "/dishes",
+    responses(
+        (status = 200, description = "Success", body = Vec<Dish>),
+        (status = NOT_FOUND, description = "Dishes not found")
+    )
+)]
 pub async fn get_dishes(State(pool): State<PgPool>) -> Result<Json<Vec<Dish>>, MyError> {
     
     let mut dishes: Vec<Dish> = sqlx::query_as("select * from tb_dish order by dish_id")
@@ -20,6 +28,14 @@ pub async fn get_dishes(State(pool): State<PgPool>) -> Result<Json<Vec<Dish>>, M
     
 }
 
+#[utoipa::path(
+    get,
+    path = "/users",
+    responses(
+        (status = 200, description = "Success", body = Vec<User>),
+        (status = NOT_FOUND, description = "Users not found")
+    )
+)]
 pub async fn get_users(State(pool): State<PgPool>) -> Result<Json<Vec<User>>, MyError> {
     
     let users: Vec<User> = sqlx::query_as("select * from tb_user order by user_id")
@@ -31,6 +47,14 @@ pub async fn get_users(State(pool): State<PgPool>) -> Result<Json<Vec<User>>, My
     
 }
 
+#[utoipa::path(
+    get,
+    path = "/types",
+    responses(
+        (status = 200, description = "Success", body = Vec<Type>),
+        (status = NOT_FOUND, description = "Types not found")
+    )
+)]
 pub async fn get_types(State(pool): State<PgPool>) -> Result<Json<Vec<Type>>, MyError> {
     
     let types: Vec<Type> = sqlx::query_as("select * from tb_dish_type order by type_id")
@@ -42,6 +66,14 @@ pub async fn get_types(State(pool): State<PgPool>) -> Result<Json<Vec<Type>>, My
     
 }
 
+#[utoipa::path(
+    get,
+    path = "/bases",
+    responses(
+        (status = 200, description = "Success", body = Vec<Base>),
+        (status = NOT_FOUND, description = "Bases not found")
+    )
+)]
 pub async fn get_bases(State(pool): State<PgPool>) -> Result<Json<Vec<Base>>, MyError> {
     
     let types: Vec<Base> = sqlx::query_as("select * from tb_dish_base order by base_id")
@@ -53,6 +85,14 @@ pub async fn get_bases(State(pool): State<PgPool>) -> Result<Json<Vec<Base>>, My
     
 }
 
+#[utoipa::path(
+    get,
+    path = "/prods",
+    responses(
+        (status = 200, description = "Success", body = Vec<Product>),
+        (status = NOT_FOUND, description = "PRoducts not found")
+    )
+)]
 pub async fn get_prods(State(pool): State<PgPool>) -> Result<Json<Vec<Product>>, MyError> {
     
     let prods: Vec<Product> = sqlx::query_as("select * from tb_product order by prod_id")
@@ -64,6 +104,17 @@ pub async fn get_prods(State(pool): State<PgPool>) -> Result<Json<Vec<Product>>,
     
 }
 
+#[utoipa::path(
+    get,
+    path = "/struct_by_dish/{id}",
+    responses(
+        (status = 200, description = "Success", body = Vec<Structure>),
+        (status = NOT_FOUND, description = "Structure not found")
+    ),
+    params(
+        ("id" = i32, Path, description = "Get dish structure by dish id")
+    )
+)]
 pub async fn get_struct_by_dish_id(State(pool): State<PgPool>, Path(id): Path<i32>) -> Result<Json<Vec<Structure>>, MyError> {
     
     let struc: Vec<Structure> = sqlx::query_as("select * from tb_structure where dishes_id = $1")
@@ -76,6 +127,15 @@ pub async fn get_struct_by_dish_id(State(pool): State<PgPool>, Path(id): Path<i3
     
 }
 
+#[utoipa::path(
+    post,
+    path = "/add_dish",
+    request_body = Dish,
+    responses(
+        (status = 201, description = "Success"),
+        (status = 500, description = "Can`t create dish")
+    )
+)]
 pub async fn add_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Result<StatusCode, MyError> {
 
     let _ = sqlx::query("insert into tb_dish (dish_name, dish_type_id, dish_base_id, dish_image) values ($1, $2, $3, $4)")
@@ -88,6 +148,15 @@ pub async fn add_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Res
 
 }
 
+#[utoipa::path(
+    put,
+    path = "/update_dish",
+    request_body = Dish,
+    responses(
+        (status = 200, description = "Success"),
+        (status = 500, description = "Dishes not found")
+    )
+)]
 pub async fn update_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Result<StatusCode, MyError> {
 
     let _ = sqlx::query("update tb_dish set dish_name = $1, dish_type_id = $2, dish_base_id = $3, dish_image = $4 where dish_id = $5")
@@ -96,10 +165,18 @@ pub async fn update_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> 
     .await
     .map_err(MyError::DBError);
 
-    Ok(StatusCode::CREATED)
+    Ok(StatusCode::OK)
 
 }
 
+#[utoipa::path(
+    delete,
+    path = "/delete_dish",
+    responses(
+        (status = 200, description = "Success"),
+        (status = 500, description = "Dishes not found")
+    )
+)]
 pub async fn delete_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Result<StatusCode, MyError> {
 
     let _ = sqlx::query("delete from tb_dish where dish_id = $1")
@@ -112,6 +189,17 @@ pub async fn delete_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> 
 
 }
 
+#[utoipa::path(
+    get,
+    path = "/order_by_user/{id}",
+    responses(
+        (status = 200, description = "Success", body = Vec<Order>),
+        (status = NOT_FOUND, description = "Orders not found")
+    ),
+    params(
+        ("id" = i32, Path, description = "Get orders by user id")
+    )
+)]
 pub async fn get_orders_by_user_id(State(pool): State<PgPool>, Path(id): Path<i32>) -> Result<Json<Vec<Order>>, MyError> {
     
     let order: Vec<Order> = sqlx::query_as("select * from tb_order where user_id = $1")
@@ -121,9 +209,19 @@ pub async fn get_orders_by_user_id(State(pool): State<PgPool>, Path(id): Path<i3
     .map_err(MyError::DBError)?;
 
     Ok(Json(order))
-    
 }
 
+#[utoipa::path(
+    get,
+    path = "/cart_by_order",
+    responses(
+        (status = 200, description = "Success", body = Vec<OrderCart>),
+        (status = NOT_FOUND, description = "Dishes not found")
+    ),
+    params(
+        ("id" = i32, Path, description = "Get orders by user id")
+    )
+)]
 pub async fn get_cart_by_order_id(State(pool): State<PgPool>, Path(id): Path<i32>) -> Result<Json<Vec<OrderCart>>, MyError> {
     
     let cart: Vec<OrderCart> = sqlx::query_as("select * from tb_order_cart where cart_order_id = $1")
@@ -136,6 +234,14 @@ pub async fn get_cart_by_order_id(State(pool): State<PgPool>, Path(id): Path<i32
     
 }
 
+#[utoipa::path(
+    get,
+    path = "/paytypes",
+    responses(
+        (status = 200, description = "Success", body = Vec<Paytype>),
+        (status = NOT_FOUND, description = "Dishes not found")
+    )
+)]
 pub async fn get_paytypes(State(pool): State<PgPool>) -> Result<Json<Vec<Paytype>>, MyError> {
     
     let types: Vec<Paytype> = sqlx::query_as("select * from tb_paytype")
@@ -147,6 +253,15 @@ pub async fn get_paytypes(State(pool): State<PgPool>) -> Result<Json<Vec<Paytype
     
 }
 
+#[utoipa::path(
+    post,
+    path = "/dishes",
+    request_body = HashMap<Order, Vec<OrderCart>>,
+    responses(
+        (status = 201, description = "Success"),
+        (status = 500, description = "Dishes not found")
+    )
+)]
 pub async fn add_order(State(pool): State<PgPool>, Json(order): Json<HashMap<Order, Vec<OrderCart>>>) -> Result<StatusCode, MyError> {
 
     let mut trans = PgPool::begin(&pool).await.unwrap();
