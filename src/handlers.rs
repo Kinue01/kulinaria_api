@@ -9,7 +9,7 @@ use crate::{
 
 #[utoipa::path(
     get,
-    path = "/dishes",
+    path = "/api/dishes",
     responses(
         (status = 200, description = "Success", body = Vec<Dish>),
         (status = NOT_FOUND, description = "Dishes not found")
@@ -30,7 +30,7 @@ pub async fn get_dishes(State(pool): State<PgPool>) -> Result<Json<Vec<Dish>>, M
 
 #[utoipa::path(
     get,
-    path = "/users",
+    path = "/api/users",
     responses(
         (status = 200, description = "Success", body = Vec<User>),
         (status = NOT_FOUND, description = "Users not found")
@@ -49,7 +49,7 @@ pub async fn get_users(State(pool): State<PgPool>) -> Result<Json<Vec<User>>, My
 
 #[utoipa::path(
     get,
-    path = "/types",
+    path = "/api/types",
     responses(
         (status = 200, description = "Success", body = Vec<Type>),
         (status = NOT_FOUND, description = "Types not found")
@@ -68,7 +68,7 @@ pub async fn get_types(State(pool): State<PgPool>) -> Result<Json<Vec<Type>>, My
 
 #[utoipa::path(
     get,
-    path = "/bases",
+    path = "/api/bases",
     responses(
         (status = 200, description = "Success", body = Vec<Base>),
         (status = NOT_FOUND, description = "Bases not found")
@@ -87,7 +87,7 @@ pub async fn get_bases(State(pool): State<PgPool>) -> Result<Json<Vec<Base>>, My
 
 #[utoipa::path(
     get,
-    path = "/prods",
+    path = "/api/prods",
     responses(
         (status = 200, description = "Success", body = Vec<Product>),
         (status = NOT_FOUND, description = "PRoducts not found")
@@ -106,7 +106,7 @@ pub async fn get_prods(State(pool): State<PgPool>) -> Result<Json<Vec<Product>>,
 
 #[utoipa::path(
     get,
-    path = "/struct_by_dish/{id}",
+    path = "/api/struct_by_dish/{id}",
     responses(
         (status = 200, description = "Success", body = Vec<Structure>),
         (status = NOT_FOUND, description = "Structure not found")
@@ -129,7 +129,7 @@ pub async fn get_struct_by_dish_id(State(pool): State<PgPool>, Path(id): Path<i3
 
 #[utoipa::path(
     post,
-    path = "/add_dish",
+    path = "/api/add_dish",
     request_body = Dish,
     responses(
         (status = 201, description = "Success"),
@@ -150,7 +150,7 @@ pub async fn add_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> Res
 
 #[utoipa::path(
     put,
-    path = "/update_dish",
+    path = "/api/update_dish",
     request_body = Dish,
     responses(
         (status = 200, description = "Success"),
@@ -171,7 +171,7 @@ pub async fn update_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> 
 
 #[utoipa::path(
     delete,
-    path = "/delete_dish",
+    path = "/api/delete_dish",
     responses(
         (status = 200, description = "Success"),
         (status = 500, description = "Dishes not found")
@@ -191,7 +191,7 @@ pub async fn delete_dish(State(pool): State<PgPool>, Json(dish): Json<Dish>) -> 
 
 #[utoipa::path(
     get,
-    path = "/order_by_user/{id}",
+    path = "/api/order_by_user/{id}",
     responses(
         (status = 200, description = "Success", body = Vec<Order>),
         (status = NOT_FOUND, description = "Orders not found")
@@ -213,7 +213,7 @@ pub async fn get_orders_by_user_id(State(pool): State<PgPool>, Path(id): Path<i3
 
 #[utoipa::path(
     get,
-    path = "/cart_by_order",
+    path = "/api/cart_by_order/{id}",
     responses(
         (status = 200, description = "Success", body = Vec<OrderCart>),
         (status = NOT_FOUND, description = "Dishes not found")
@@ -236,7 +236,7 @@ pub async fn get_cart_by_order_id(State(pool): State<PgPool>, Path(id): Path<i32
 
 #[utoipa::path(
     get,
-    path = "/paytypes",
+    path = "/api/paytypes",
     responses(
         (status = 200, description = "Success", body = Vec<Paytype>),
         (status = NOT_FOUND, description = "Dishes not found")
@@ -255,7 +255,7 @@ pub async fn get_paytypes(State(pool): State<PgPool>) -> Result<Json<Vec<Paytype
 
 #[utoipa::path(
     post,
-    path = "/dishes",
+    path = "/api/add_order",
     request_body = HashMap<Order, Vec<OrderCart>>,
     responses(
         (status = 201, description = "Success"),
